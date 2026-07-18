@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pacto | Verification Vault</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=Inter:wght@400;500&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "primary-fixed": "#e2e2e2",
+                "on-tertiary-container": "#b1394f",
+                "primary-container": "#e2e2e2",
+                "secondary": "#c0c1ff",
+                "error": "#ffb4ab",
+                "on-primary-fixed": "#1a1c1c",
+                "primary-fixed-dim": "#c6c6c7",
+                "secondary-fixed": "#e1e0ff",
+                "surface": "#131314",
+                "secondary-container": "#3131c0",
+                "primary": "#ffffff",
+                "on-error": "#690005",
+                "surface-container-highest": "#353436",
+                "surface-container-low": "#1c1b1c",
+                "outline-variant": "#444748",
+                "inverse-surface": "#e5e2e3",
+                "surface-container-lowest": "#0e0e0f",
+                "on-secondary": "#1000a9",
+                "on-primary-fixed-variant": "#454747",
+                "on-primary-container": "#636565",
+                "inverse-primary": "#5d5f5f",
+                "background": "#0A0A0B",
+                "on-error-container": "#ffdad6",
+                "surface-tint": "#c6c6c7",
+                "on-tertiary-fixed-variant": "#891933",
+                "tertiary-fixed-dim": "#ffb2b9",
+                "on-surface": "#e5e2e3",
+                "secondary-fixed-dim": "#c0c1ff",
+                "outline": "#8e9192",
+                "on-background": "#e5e2e3",
+                "surface-container": "#201f20",
+                "surface-dim": "#131314",
+                "on-tertiary-fixed": "#400010",
+                "inverse-on-surface": "#313031",
+                "surface-bright": "#3a393a",
+                "on-tertiary": "#67001f",
+                "on-secondary-fixed-variant": "#2f2ebe",
+                "tertiary-container": "#ffdadc",
+                "surface-container-high": "#2a2a2b",
+                "tertiary": "#ffffff",
+                "on-secondary-container": "#b0b2ff",
+                "tertiary-fixed": "#ffdadc",
+                "on-secondary-fixed": "#07006c",
+                "on-primary": "#2f3131",
+                "surface-variant": "#353436",
+                "on-surface-variant": "#c4c7c8",
+                "error-container": "#93000a"
+            },
+            "borderRadius": {
+                "DEFAULT": "1rem",
+                "lg": "2rem",
+                "xl": "3rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "container-max": "1280px",
+                "gutter": "24px",
+                "unit": "8px",
+                "section-padding": "120px"
+            },
+            "fontFamily": {
+                "display-lg-mobile": ["Hanken Grotesk"],
+                "label-mono": ["Geist"],
+                "headline-md": ["Hanken Grotesk"],
+                "body-md": ["Inter"],
+                "display-lg": ["Hanken Grotesk"],
+                "body-lg": ["Inter"],
+                "headline-sm": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                "display-lg-mobile": ["48px", {"lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "800"}],
+                "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                "headline-md": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}],
+                "display-lg": ["72px", {"lineHeight": "76px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}],
+                "headline-sm": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0A0A0B;
+            color: #e5e2e3;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .aurora-indigo {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 101, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(100px);
+            z-index: -1;
+            top: -200px;
+            left: -100px;
+        }
+        .aurora-rose {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(177, 57, 79, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(100px);
+            z-index: -1;
+            bottom: -100px;
+            right: -50px;
+        }
+        .drag-box:hover {
+            border-color: #10b981; /* emerald-500 */
+            background: rgba(16, 185, 129, 0.02);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Atmospheric Auroras -->
+<div class="aurora-indigo"></div>
+<div class="aurora-rose"></div>
+<!-- Navigation Shell -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<div class="flex items-center gap-8">
+<span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">Pacto</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Studio</a>
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Documents</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Templates</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Audit Log</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors px-4 py-2">Log In</button>
+<button class="font-body-md text-body-md bg-primary text-on-primary px-6 py-2 rounded-full font-semibold active:scale-95 duration-200 transition-all">Sign Up</button>
+</div>
+</header>
+<!-- Side Navigation (Suppressed on this transactional dashboard per logic but kept structure for context) -->
+<aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 px-4 w-64 border-r border-white/5 bg-surface-container-lowest z-40">
+<div class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-mono text-label-mono">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label-mono text-label-mono">Editor</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="folder_open">folder_open</span>
+<span class="font-label-mono text-label-mono">Repository</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-mono text-label-mono">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface transition-all duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-mono text-label-mono">Settings</span>
+</a>
+</div>
+<div class="mt-auto border-t border-white/5 pt-4">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-bold mb-4 active:scale-95 transition-transform">New Contract</button>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-mono text-label-mono">Help</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Grid -->
+<main class="lg:ml-64 pt-24 pb-12 px-12 min-h-screen">
+<div class="max-w-[1400px] mx-auto flex flex-col xl:flex-row gap-8">
+<!-- Left Column: Active Contracts -->
+<section class="xl:w-1/3 flex flex-col gap-6">
+<header class="flex justify-between items-center">
+<h2 class="text-xl font-semibold text-white tracking-tight">Your Active Pacts</h2>
+<span class="font-label-mono text-label-mono text-on-surface-variant">3 ACTIVE</span>
+</header>
+<div class="flex flex-col gap-4">
+<!-- Card 1 -->
+<div class="bg-[#18181B] border border-white/5 rounded-[12px] p-5 hover:border-white/10 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-sm text-[18px] text-white group-hover:text-primary-fixed transition-colors">Logo Design - Ramesh</h3>
+<span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold">Verified</span>
+</div>
+<p class="font-label-mono text-label-mono text-on-surface-variant">Modified 2 hours ago</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-[#18181B] border border-white/5 rounded-[12px] p-5 hover:border-white/10 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-sm text-[18px] text-white group-hover:text-primary-fixed transition-colors">SaaS Dev - Sarah</h3>
+<span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold">Verified</span>
+</div>
+<p class="font-label-mono text-label-mono text-on-surface-variant">Awaiting Final Sig • Oct 24</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-[#18181B] border border-white/5 rounded-[12px] p-5 hover:border-white/10 transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-sm text-[18px] text-white group-hover:text-primary-fixed transition-colors">NDA - Horizon Corp</h3>
+<span class="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold">Verified</span>
+</div>
+<p class="font-label-mono text-label-mono text-on-surface-variant">Archived • Oct 12</p>
+</div>
+</div>
+<!-- Bento Style Secondary Info -->
+<div class="mt-8 p-6 glass-panel rounded-lg border border-white/5 flex flex-col gap-4 relative overflow-hidden">
+
+<div class="relative z-10">
+<h4 class="font-headline-sm text-[16px] text-secondary mb-2">Storage Usage</h4>
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-3/4 rounded-full"></div>
+</div>
+<p class="mt-2 font-label-mono text-[11px] text-on-surface-variant">7.2 GB of 10 GB used</p>
+</div>
+</div>
+</section>
+<!-- Right Column: The Vault -->
+<section class="xl:w-2/3 bg-[#111111] rounded-[24px] border border-white/10 p-12 lg:p-20 flex flex-col items-center">
+<div class="w-full max-w-2xl text-center mb-12">
+<h2 class="text-display-lg-mobile md:text-headline-md font-headline-md text-white mb-4">Verification Vault</h2>
+<p class="text-body-lg text-on-surface-variant">Validate the integrity of your legal documents using our proprietary cryptographic hash engine.</p>
+</div>
+<!-- Drag and Drop Area -->
+<div class="drag-box w-full aspect-video md:aspect-[16/9] bg-black/20 border-2 border-dashed border-gray-600 rounded-[16px] flex flex-col items-center justify-center gap-6 transition-all cursor-pointer group" id="drop-zone">
+<div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[48px] text-gray-400 group-hover:text-emerald-500 transition-colors" data-icon="description">description</span>
+</div>
+<div class="text-center">
+<p class="text-body-lg text-white font-medium">Drop signed PDF here</p>
+<p class="text-on-surface-variant font-label-mono mt-1">to cryptographically verify hash seal</p>
+</div>
+<div class="mt-4 px-6 py-2 border border-white/10 rounded-full font-label-mono text-white/50 text-[10px] group-hover:border-emerald-500/50 transition-colors">
+                        SECURE AES-256 UPLOAD
+                    </div>
+</div>
+<!-- Verification Result Block (Initially Hidden/Interactive) -->
+<div class="mt-12 w-full bg-emerald-900/20 border border-emerald-500/50 p-6 rounded-[12px] flex items-center gap-6 opacity-0 translate-y-4 transition-all duration-700" id="result-block">
+<div class="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-emerald-400 text-[32px]" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-[18px] text-emerald-400">MATCH FOUND</h4>
+<p class="text-emerald-100/70 font-body-md">Level-3 encryption verified against database record. Integrity: 100%.</p>
+</div>
+<button class="ml-auto font-label-mono text-emerald-400 underline underline-offset-4 hover:text-white transition-colors">Download Certificate</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-unit px-gutter flex flex-col md:flex-row justify-between items-center gap-4 border-t border-white/5 bg-background">
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-primary">Pacto</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">© 2024 Pacto Technologies. Secure &amp; Encrypted.</span>
+</div>
+<div class="flex gap-6">
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-primary transition-opacity" href="#">Privacy Policy</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-primary transition-opacity" href="#">Terms of Service</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-primary transition-opacity" href="#">Security Whitepaper</a>
+</div>
+</footer>
+<script>
+        // Micro-interactions for Drag and Drop
+        const dropZone = document.getElementById('drop-zone');
+        const resultBlock = document.getElementById('result-block');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-emerald-500', 'bg-emerald-500/5');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-emerald-500', 'bg-emerald-500/5');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-emerald-500', 'bg-emerald-500/5');
+            
+            // Simulate Upload/Verification Process
+            dropZone.querySelector('.text-center p').innerText = "Verifying Signatures...";
+            dropZone.querySelector('span').innerText = "sync";
+            dropZone.querySelector('span').classList.add('animate-spin');
+
+            setTimeout(() => {
+                dropZone.querySelector('.text-center p').innerText = "File Secured";
+                dropZone.querySelector('span').innerText = "verified";
+                dropZone.querySelector('span').classList.remove('animate-spin');
+                dropZone.querySelector('span').classList.replace('text-gray-400', 'text-emerald-400');
+                
+                // Show Result
+                resultBlock.classList.remove('opacity-0', 'translate-y-4');
+            }, 1800);
+        });
+
+        // Click to simulate as well
+        dropZone.addEventListener('click', () => {
+            const mockEvent = { preventDefault: () => {} };
+            dropZone.dispatchEvent(new CustomEvent('drop', { detail: mockEvent }));
+        });
+    </script>
+</body></html>

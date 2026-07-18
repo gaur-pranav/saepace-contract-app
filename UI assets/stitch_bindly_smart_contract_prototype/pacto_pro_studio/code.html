@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pacto Pro Studio | Legal Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Hanken+Grotesk:wght@600;700;800&family=Geist:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Hanken+Grotesk:wght@100..900&family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            backdrop-filter: blur(40px);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #2a2a2b 25%, #353436 50%, #2a2a2b 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .aurora {
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#b0b2ff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "on-background": "#e5e2e3",
+                        "background": "#131314",
+                        "secondary": "#c0c1ff",
+                        "inverse-primary": "#5d5f5f",
+                        "surface-container-high": "#2a2a2b",
+                        "surface": "#131314",
+                        "on-tertiary-container": "#b1394f",
+                        "on-secondary": "#1000a9",
+                        "on-primary": "#2f3131",
+                        "inverse-on-surface": "#313031",
+                        "surface-container": "#201f20",
+                        "on-primary-fixed": "#1a1c1c",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "outline-variant": "#444748",
+                        "primary-container": "#e2e2e2",
+                        "surface-container-lowest": "#0e0e0f",
+                        "tertiary-fixed-dim": "#ffb2b9",
+                        "surface-container-highest": "#353436",
+                        "surface-container-low": "#1c1b1c",
+                        "primary": "#ffffff",
+                        "primary-fixed": "#e2e2e2",
+                        "on-primary-fixed-variant": "#454747",
+                        "error-container": "#93000a",
+                        "surface-bright": "#3a393a",
+                        "on-surface-variant": "#c4c7c8",
+                        "secondary-fixed": "#e1e0ff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-error": "#690005",
+                        "tertiary": "#ffffff",
+                        "on-surface": "#e5e2e3",
+                        "on-tertiary": "#67001f",
+                        "on-primary-container": "#636565",
+                        "on-tertiary-fixed-variant": "#891933",
+                        "error": "#ffb4ab",
+                        "surface-dim": "#131314",
+                        "on-tertiary-fixed": "#400010",
+                        "outline": "#8e9192",
+                        "surface-variant": "#353436",
+                        "tertiary-container": "#ffdadc",
+                        "surface-tint": "#c6c6c7",
+                        "inverse-surface": "#e5e2e3",
+                        "secondary-container": "#3131c0",
+                        "on-secondary-fixed": "#07006c",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed": "#ffdadc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "section-padding": "120px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "label-mono": ["Geist"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-sm": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                        "headline-md": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "display-lg-mobile": ["48px", {"lineHeight": "52px", "letterSpacing": "-0.03em", "fontWeight": "800"}],
+                        "display-lg": ["72px", {"lineHeight": "76px", "letterSpacing": "-0.04em", "fontWeight": "800"}],
+                        "headline-sm": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-secondary-container/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-16 bg-background/80 backdrop-blur-xl border-b border-white/10">
+<div class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight">Pacto</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1" href="#">Studio</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Documents</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Templates</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Audit Log</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-all active:scale-95 duration-200">Log In</button>
+<button class="font-body-md text-body-md px-6 py-2 bg-primary text-on-primary rounded-full font-semibold hover:bg-opacity-90 active:scale-95 transition-all">Sign Up</button>
+</div>
+</nav>
+<!-- Main Workspace Container -->
+<main class="pt-16 flex h-screen w-full overflow-hidden">
+<!-- Left Pane (Input) -->
+<section class="w-1/2 bg-[#0A0A0B] p-12 flex flex-col justify-center relative overflow-hidden">
+<!-- Aurora Background Effect -->
+<div class="aurora absolute -top-48 -left-48 w-96 h-96 bg-secondary-container/10 rounded-full"></div>
+<div class="aurora absolute -bottom-48 -right-48 w-96 h-96 bg-tertiary-container/5 rounded-full"></div>
+<div class="relative z-10 space-y-8">
+<header class="space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full font-label-mono text-label-mono text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                        PRO STUDIO v2.4
+                    </div>
+<h1 class="font-headline-md text-headline-md text-primary">Drafting Workspace</h1>
+</header>
+<div class="space-y-4">
+<textarea class="w-full h-72 bg-[#141415] border border-white/5 rounded-2xl p-6 text-on-surface focus:outline-none focus:border-white/20 transition-all font-body-md resize-none shadow-inner" placeholder="Describe your deal parameters..."></textarea>
+<div class="flex flex-wrap gap-3">
+<button class="font-label-mono text-label-mono px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-on-surface-variant transition-all active:scale-95">+ Add 50% Advance</button>
+<button class="font-label-mono text-label-mono px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-on-surface-variant transition-all active:scale-95">+ Add IP Transfer</button>
+<button class="font-label-mono text-label-mono px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-on-surface-variant transition-all active:scale-95">+ Late Fee Clause</button>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full py-4 bg-secondary-container text-on-secondary shadow-[0_0_20px_rgba(49,49,192,0.3)] hover:shadow-[0_0_30px_rgba(49,49,192,0.5)] rounded-xl font-headline-sm text-headline-sm transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-3">
+<span>Generate Legal Contract</span>
+<span class="material-symbols-outlined">auto_awesome</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Right Pane (Preview) -->
+<section class="w-1/2 bg-black p-12 flex items-center justify-center relative">
+<!-- Background Detail -->
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px); background-size: 24px 24px;"></div>
+<!-- A4 Container -->
+<div class="glass-card w-full max-w-lg aspect-[1/1.414] bg-[#1C1C1F] p-12 flex flex-col justify-between relative shadow-2xl overflow-hidden group">
+<!-- Inner Light Catch -->
+<div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+<div class="space-y-10">
+<!-- Contract Header -->
+<div class="space-y-4">
+<div class="w-24 h-2 shimmer rounded"></div>
+<div class="w-48 h-6 shimmer rounded opacity-80"></div>
+</div>
+<!-- Skeletal Content -->
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="w-full h-3 shimmer rounded opacity-40"></div>
+<div class="w-full h-3 shimmer rounded opacity-40"></div>
+<div class="w-3/4 h-3 shimmer rounded opacity-40"></div>
+</div>
+<div class="space-y-2">
+<div class="w-full h-3 shimmer rounded opacity-40"></div>
+<div class="w-full h-3 shimmer rounded opacity-40"></div>
+<div class="w-5/6 h-3 shimmer rounded opacity-40"></div>
+<div class="w-2/3 h-3 shimmer rounded opacity-40"></div>
+</div>
+<div class="space-y-2 pt-4">
+<div class="w-32 h-4 shimmer rounded opacity-60"></div>
+<div class="w-full h-3 shimmer rounded opacity-40"></div>
+<div class="w-full h-3 shimmer rounded opacity-40"></div>
+</div>
+</div>
+</div>
+<!-- Footer Text -->
+<footer class="pt-8 border-t border-white/5 flex justify-between items-center">
+<span class="font-label-mono text-label-mono text-primary font-bold tracking-widest uppercase">DIGITAL AUDIT TRAIL: PENDING</span>
+<span class="material-symbols-outlined text-white/20">lock</span>
+</footer>
+<!-- Decorative UI Elements -->
+<div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+<span class="material-symbols-outlined text-secondary text-sm">open_in_full</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', () => {
+                    // Logic for hover states if not handled by CSS
+                });
+            });
+
+            // Simulate loading state on generate click
+            const generateBtn = document.querySelector('button.bg-secondary-container');
+            generateBtn.addEventListener('click', () => {
+                generateBtn.classList.add('animate-pulse');
+                setTimeout(() => {
+                    generateBtn.classList.remove('animate-pulse');
+                }, 2000);
+            });
+        });
+    </script>
+</body></html>
