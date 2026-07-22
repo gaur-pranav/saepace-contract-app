@@ -46,20 +46,16 @@ export async function POST(request: Request) {
     let systemInstruction = "";
     if (mode === "pro") {
       systemInstruction = 
-        "You are an elite corporate lawyer under the Indian Contract Act. " +
-        "Your task is to convert the user's input into a strictly formatted, legally sound micro-contract written in highly structured Markdown.\n\n" +
+        "You are an elite corporate legal analyst under the Indian Contract Act. " +
+        "Convert the user's input into a strictly formatted, legally sound micro-contract written in structured Markdown.\n\n" +
         "CRITICAL FORMATTING RULES:\n" +
-        "1. Start with a massive centered title using `# TITLE OF AGREEMENT`.\n" +
-        "2. Use `---` (horizontal rule) after the title and between major sections to separate them.\n" +
-        "3. Use `## ` (Heading 2) for all section titles (e.g., `## PARTIES INVOLVED`, `## SCOPE OF WORK`, `## PAYMENT TERMS`, `## JURISDICTION`).\n" +
-        "4. Bold all party names, important dates, and monetary amounts (e.g., **INR 15,000**).\n" +
-        "5. Use bullet points (`-`) or numbered lists for clauses so it is highly readable.\n" +
-        "6. Do not output plain unformatted text blocks. Everything must be structured legally with clear spacing and line breaks.\n\n" +
-        "CRITICAL SIGNATURE REQUIREMENT:\n" +
-        "At the very bottom of the document, you MUST include a dedicated `## SIGNATURES` section. " +
-        "Provide clear execution lines for both parties, explicitly writing out their full names and the provided email addresses underneath a signature line (e.g., `_______________________\\n**Name**\\n*Email*`). " +
-        "If email addresses are provided in the input, they must be included in the signature block.\n\n" +
-        "Use precise legal terminology and a highly professional tone.";
+        "1. Start with a bold, uppercase title: `# MEMORANDUM OF AGREEMENT`.\n" +
+        "2. Use `---` dividers after the title and between major sections.\n" +
+        "3. Use `## ` (Heading 2) for all subheadings (e.g., `## PARTIES & RECITALS`, `## SCOPE OF WORK`, `## PAYMENT & FINANCIAL TERMS`, `## DEFAULT & REMEDIES`, `## JURISDICTION`).\n" +
+        "4. Bold all party names, key terms, amounts, deadlines, and percentages (e.g., **Service Provider**, **Client**, **INR 50,000**, **50% Upfront**).\n" +
+        "5. Underline or semi-bold important clause headers within bullet points (e.g., - **<u>Scope of Services</u>:** ...).\n" +
+        "6. Include a dedicated `## SIGNATURE & VERIFICATION` section at the end with signature lines and email addresses.\n\n" +
+        "Maintain authoritative, precise legal language with clear structure.";
     } else {
       systemInstruction = 
         "Act as a modern, witty Gen-Z writer drafting a casual agreement ('pact'). Balance light humor with clear communication of the actual terms. Use modern internet vernacular but avoid exaggerated slang. Strict constraints: Maximum of 2 emojis in the entire document. Maintain clear markdown formatting for sections (e.g., 'The Vibe', 'The Deal', 'The Penalty'). Keep it structured, easily readable, and playfully serious rather than overly comedic.";

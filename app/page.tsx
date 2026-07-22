@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -9,7 +9,23 @@ import { Footer } from "@/components/Footer";
 
 export default function LandingPage() {
   const [inputVal, setInputVal] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch("/api/auth/session");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            setIsAuthenticated(true);
+          }
+        }
+      } catch (e) {}
+    };
+    checkSession();
+  }, []);
 
   const editorialFeatures = [
     {
@@ -38,19 +54,27 @@ export default function LandingPage() {
   return (
     <main className="relative flex min-h-screen flex-col bg-[#000000] text-white overflow-x-hidden font-sans">
       
-      {/* ─── 1. FLOATING NAVIGATION BAR (SPECIFIC TO LANDING PAGE) ─── */}
-      <nav className="absolute top-6 right-6 md:right-12 z-50 flex items-center gap-8 backdrop-blur-md bg-white/5 border border-white/10 px-6 py-3 rounded-2xl">
+      {/* ─── 1. FLOATING NAVIGATION BAR ─── */}
+      <nav className="absolute top-6 right-6 md:right-12 z-50 flex items-center gap-6 md:gap-8 backdrop-blur-md bg-white/5 border border-white/10 px-6 py-3 rounded-2xl">
         <Link 
           href="/docs" 
           className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
         >
           Documentation
         </Link>
-        <Link href="/auth">
-          <button className="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer">
-            Sign In
-          </button>
-        </Link>
+        {isAuthenticated ? (
+          <Link href="/dashboard">
+            <button className="btn-glow-cyan bg-[#06B6D4] hover:bg-[#22d3ee] text-black px-5 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer">
+              Go to Vault
+            </button>
+          </Link>
+        ) : (
+          <Link href="/auth">
+            <button className="bg-white/10 hover:bg-white/20 text-white px-5 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer">
+              Sign In
+            </button>
+          </Link>
+        )}
       </nav>
 
       {/* ─── 2. GLOBAL HERO LAYOUT (SIDE-BY-SIDE SPLIT) ─── */}
@@ -58,7 +82,7 @@ export default function LandingPage() {
         
         {/* LEFT COLUMN: VISUAL BRAND NODE */}
         <div className="w-full lg:w-[45%] flex items-center justify-center relative">
-          <div className="relative w-[340px] h-[340px] lg:w-[450px] lg:h-[450px] bg-[#020202] shadow-[0_0_100px_inset_rgba(124,58,237,0.1)] rounded-full border border-white/5 flex items-center justify-center">
+          <div className="relative w-[300px] h-[300px] lg:w-[450px] lg:h-[450px] bg-[#020202] shadow-[0_0_100px_inset_rgba(124,58,237,0.1)] rounded-full border border-white/5 flex items-center justify-center">
             
             {/* Layer 1: Orbiting Ring SVG */}
             <div className="absolute inset-4 pointer-events-none">

@@ -55,9 +55,12 @@ export default function CreatePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           party1,
+          party1Email,
           party2,
+          party2Email,
           mode,
           content: generatedMarkdown,
+          expirationDate: showDatePicker ? expirationDate : null,
         }),
       });
       const data = await response.json();
