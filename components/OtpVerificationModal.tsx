@@ -59,10 +59,6 @@ export function OtpVerificationModal({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send verification OTP");
-      
-      if (data.devOtp) {
-        setDevOtpNotice(`DEV MODE OTP: ${data.devOtp}`);
-      }
       setResendTimer(60);
     } catch (err: any) {
       setError(err.message);
@@ -171,11 +167,7 @@ export function OtpVerificationModal({
               <span className="font-semibold text-white">{userEmail || "your email"}</span> to approve deal signing.
             </p>
 
-            {devOtpNotice && (
-              <div className="mt-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 px-4 py-2 text-xs font-mono font-semibold text-cyan-400">
-                ⚡ {devOtpNotice}
-              </div>
-            )}
+
 
             {error && (
               <div className="mt-4 flex items-center gap-2 rounded-xl bg-rose-500/10 border border-rose-500/20 px-4 py-2.5 text-xs text-rose-400 w-full text-left">

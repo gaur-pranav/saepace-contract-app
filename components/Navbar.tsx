@@ -1,14 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
-  FileEdit,
   LayoutDashboard,
   User,
   Plus,
   BookOpen,
+  HelpCircle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo } from "@/components/Logo";
@@ -25,7 +25,9 @@ interface NavbarProps {
 export function Navbar({ mode, setMode, hidden }: NavbarProps) {
   const pathname = usePathname();
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const [userName, setUserName] = useState<string>("");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [dockHoveredIndex, setDockHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -34,11 +36,18 @@ export function Navbar({ mode, setMode, hidden }: NavbarProps) {
         if (res.ok) {
           const data = await res.json();
           setUser(data.user);
+          if (data.user?.email) {
+            const profRes = await fetch("/api/profile");
+            if (profRes.ok) {
+              const profData = await profRes.json();
+              if (profData.profile?.name) setUserName(profData.profile.name);
+            }
+          }
         }
       } catch (e) {}
     };
     fetchSession();
-  }, [pathname]);
+  }, []);
 
   if (hidden) return null;
 
@@ -52,7 +61,7 @@ export function Navbar({ mode, setMode, hidden }: NavbarProps) {
         <motion.header
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="sticky top-0 z-50 hidden lg:block w-full border-b border-white/5 bg-[#050505]/70 backdrop-blur-md"
+          className="sticky top-0 z-50 hidden lg:block w-full border-b border-white/5 bg-[#050505]/70 backdrop-blur-md print:hidden"
         >
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
             {/* Left: Logo */}
@@ -74,21 +83,21 @@ export function Navbar({ mode, setMode, hidden }: NavbarProps) {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="btn-glow-cyan rounded-full bg-[#06B6D4] px-6 py-2 text-sm font-semibold text-black transition-all hover:bg-[#22d3ee]"
+                className="btn-glow-cyan rounded-full bg-[#06B6D4] px-6 py-2 text-sm font-semibold text-black transition-all hover:bg-[#22d3ee] cursor-pointer"
               >
-                Sign In / Up
+                Sign In
               </motion.button>
             </Link>
           </div>
         </motion.header>
 
         {/* Mobile Header */}
-        <div className="lg:hidden sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-white/5 bg-[#050505]/80 px-4 backdrop-blur-md">
+        <div className="lg:hidden sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-white/5 bg-[#050505]/80 px-4 backdrop-blur-md print:hidden">
           <Link href="/">
             <Logo mode="fun" size="sm" />
           </Link>
           <Link href="/auth">
-            <button className="btn-glow-cyan rounded-full bg-[#06B6D4] px-4 py-1.5 text-xs font-semibold text-black">
+            <button className="btn-glow-cyan rounded-full bg-[#06B6D4] px-4 py-1.5 text-xs font-semibold text-black cursor-pointer">
               Sign In
             </button>
           </Link>
@@ -99,8 +108,14 @@ export function Navbar({ mode, setMode, hidden }: NavbarProps) {
 
   // ─── Authenticated Navbar ───
   const appLinks = [
-    { name: "Vault", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  ];
+
+  const dockLinks = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "New Pact", href: "/create", icon: Plus, isCta: true },
     { name: "Profile", href: "/profile", icon: User },
+    { name: "Docs", href: "/docs", icon: BookOpen },
   ];
 
   const modes = [
@@ -108,15 +123,13 @@ export function Navbar({ mode, setMode, hidden }: NavbarProps) {
     { id: "fun" as const, label: "FUN MODE" },
   ];
 
-
-
   return (
     <>
       {/* Desktop Top Navbar */}
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-50 hidden lg:block w-full border-b border-white/5 bg-[#050505]/70 backdrop-blur-md"
+        className="sticky top-0 z-50 hidden lg:block w-full border-b border-white/5 bg-[#050505]/70 backdrop-blur-md print:hidden"
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           {/* Left: Logo */}
@@ -192,101 +205,98 @@ export function Navbar({ mode, setMode, hidden }: NavbarProps) {
             )}
           </div>
 
-          {/* Right: Avatar + Create */}
-          <div className="flex items-center gap-3">
+          {/* Right: New Pact CTA + Profile Reroute Avatar */}
+          <div className="flex items-center gap-4">
             <Link href="/create">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] px-5 py-2 text-sm font-semibold text-white transition-all hover:opacity-90"
+                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] px-5 py-2 text-sm font-semibold text-white transition-all hover:opacity-90 cursor-pointer"
               >
                 <Plus className="h-4 w-4" />
                 New Pact
               </motion.button>
             </Link>
 
-            {/* Avatar */}
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-sm font-bold text-white cursor-pointer">
-              {user.email.charAt(0).toUpperCase()}
-              {/* Online dot */}
-              <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#050505] bg-emerald-400" />
-            </div>
+            {/* Profile Avatar Reroute */}
+            <Link href="/profile" title={userName ? `Profile: ${userName}` : "View Profile & Settings"}>
+              <motion.div 
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
+                className={`relative flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-sm font-bold text-white cursor-pointer transition-all ${
+                  pathname === "/profile" ? "ring-2 ring-cyan-400 ring-offset-2 ring-offset-black" : ""
+                }`}
+              >
+                {(userName && userName.trim()) ? userName.trim().charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+                <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#050505] bg-emerald-400" />
+              </motion.div>
+            </Link>
           </div>
         </div>
       </motion.header>
 
-      {/* Mobile Header */}
-      <div className="lg:hidden sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-white/5 bg-[#050505]/80 px-4 backdrop-blur-md print:hidden">
-        <Link href="/">
+      {/* Mobile Top Header - Centered Logo Only */}
+      <div className="lg:hidden sticky top-0 z-50 flex h-14 w-full items-center justify-center border-b border-white/5 bg-[#050505]/80 px-4 backdrop-blur-md print:hidden">
+        <Link href="/" className="flex items-center justify-center">
           <Logo mode={mode || "fun"} size="sm" />
         </Link>
-        <div className="flex items-center gap-2">
-          {mode && setMode && (
-            <div className="flex space-x-1 rounded-full border border-white/10 bg-white/5 p-0.5">
-              {modes.map((m) => (
-                <button
-                  key={m.id}
-                  onClick={() => setMode(m.id)}
-                  className={`relative rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wider ${
-                    mode === m.id
-                      ? "bg-white/10 text-white"
-                      : "text-gray-400"
-                  }`}
-                >
-                  {m.label}
-                </button>
-              ))}
-            </div>
-          )}
-          <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-xs font-bold text-white">
-            {user.email.charAt(0).toUpperCase()}
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#050505] bg-emerald-400" />
-          </div>
-        </div>
       </div>
 
-      {/* Mobile Dock */}
-      <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] print:hidden">
+      {/* ─── REACT BITS FLOATING MOBILE DOCK ─── */}
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] print:hidden">
         <motion.div
-          initial={{ y: 50, opacity: 0 }}
+          initial={{ y: 60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", bounce: 0.3 }}
-          className="flex items-center gap-1 rounded-2xl border border-white/10 bg-[#141415]/80 p-1.5 backdrop-blur-2xl shadow-2xl"
+          transition={{ type: "spring", stiffness: 350, damping: 25 }}
+          className="flex items-center gap-2 rounded-3xl border border-white/10 bg-[#0c0c0e]/85 px-3 py-2 backdrop-blur-2xl shadow-[0_10px_35px_rgba(0,0,0,0.8)]"
+          onMouseLeave={() => setDockHoveredIndex(null)}
         >
-          {appLinks.map((link) => {
-            const Icon = link.icon;
-            const isActive = pathname === link.href;
+          {dockLinks.map((item, idx) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            const isHovered = dockHoveredIndex === idx;
+
             return (
-              <Link key={link.name} href={link.href}>
+              <Link key={item.name} href={item.href} className="relative">
+                {/* Tooltip Label */}
+                <AnimatePresence>
+                  {isHovered && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                      animate={{ opacity: 1, y: -42, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.8 }}
+                      className="absolute left-1/2 -translate-x-1/2 pointer-events-none rounded-lg bg-[#18181c] border border-white/10 px-2.5 py-1 text-[10px] font-bold text-white whitespace-nowrap shadow-xl z-50"
+                    >
+                      {item.name}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <motion.div
-                  whileHover={{ scale: 1.15, y: -4 }}
-                  whileTap={{ scale: 0.9 }}
-                  className={`relative flex h-11 w-11 flex-col items-center justify-center rounded-xl transition-colors ${
-                    isActive
-                      ? "bg-white/10 text-white"
-                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  onMouseEnter={() => setDockHoveredIndex(idx)}
+                  onTouchStart={() => setDockHoveredIndex(idx)}
+                  whileHover={{ scale: 1.25, y: -6 }}
+                  whileTap={{ scale: 0.92 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                  className={`relative flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
+                    item.isCta
+                      ? "bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-white shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+                      : isActive
+                      ? "bg-white/15 text-cyan-400 border border-white/15"
+                      : "text-gray-400 hover:bg-white/10 hover:text-white"
                   }`}
                 >
                   <Icon className="h-5 w-5" />
-                  {isActive && (
-                    <span className="absolute -bottom-0.5 h-1 w-1 rounded-full bg-white" />
+                  {isActive && !item.isCta && (
+                    <motion.span
+                      layoutId="active-dock-dot"
+                      className="absolute -bottom-1 h-1 w-1 rounded-full bg-cyan-400"
+                    />
                   )}
                 </motion.div>
               </Link>
             );
           })}
-
-          <div className="mx-1 h-7 w-px bg-white/10" />
-
-          <Link href="/create">
-            <motion.div
-              whileHover={{ scale: 1.15, y: -4 }}
-              whileTap={{ scale: 0.9 }}
-              className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#7C3AED]/30 to-[#06B6D4]/30 text-white"
-            >
-              <Plus className="h-5 w-5" />
-            </motion.div>
-          </Link>
         </motion.div>
       </div>
     </>

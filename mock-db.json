@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "id": "4d6cdc68-3931-4bf1-86d2-916e68d4c76d",
+    "userId": "awsforpranav@gmail.com",
+    "party1": "Pranav",
+    "party1Email": "awsforpranav@gmail.com",
+    "party2": "vishesh",
+    "party2Email": "",
+    "mode": "fun",
+    "content": "# The Vibe\nLet's get this straight, Vishesh and I are about to make a pact that's gonna make his wedding day even more lit. I, Pranav, am committing to bust out some epic dance moves at his special day.\n\n# The Deal\nHere are the terms: I'll dance at Vishesh's wedding, and in return, he gets to enjoy my hopefully-not-too-embarrassing dance skills. This pact is all about having a good time and making some unforgettable memories.\n\n# The Penalty\nIf I fail to deliver on my dance promise, I'll take full responsibility and pay for my trip to the wedding. No excuses, no backing out 🚫. This is my way of showing I'm serious about keeping my end of the bargain.\n\n# The Sign Off\nBy agreeing to this pact, we're both on the same page. Let's make this wedding one for the books, and may my dance moves be forever etched in the memories of the guests 💃.",
+    "hash": "57c5dd29078ea238ab8849f6f7308cc1f55d0445fd1f1ce4de2087494e2f4a20",
+    "createdAt": "2026-07-24T08:08:08.223Z",
+    "status": "approved",
+    "party1ApprovedAt": "2026-07-24T08:08:08.223Z",
+    "party2ApprovedAt": "2026-07-24T08:08:08.223Z",
+    "expirationDate": null,
+    "editsRemaining": 3
+  },
+  {
+    "id": "f3421cb6-de76-432d-ac5f-b6cf7139fb04",
+    "userId": "visheshjindal171@gmail.com",
+    "party1": "Vishesh",
+    "party1Email": "visheshjindal171@gmail.com",
+    "party2": "Jinal",
+    "party2Email": "",
+    "mode": "fun",
+    "content": "### The Vibe\nLet's keep things real and respectful. This pact is about commitment and accountability between two consenting adults, Vishesh and Jinal. \n\n### The Deal\nVishesh agrees to engage in regular sexual activity with Jinal. If Vishesh fails to uphold this agreement, the terms of the penalty will be enforced.\n\n### The Penalty\nIn the event that Vishesh does not fulfill his commitment, he will abstain from sexual activity. This pact is a mutual agreement and should be taken seriously by both parties. 💡\n\n### The Fine Print\nBoth Vishesh and Jinal understand that this pact is based on mutual respect and trust. Any breach of this agreement may result in a reevaluation of the relationship. 📝",
+    "hash": "",
+    "createdAt": "2026-07-23T17:08:31.058+00:00",
+    "status": "pending_approval",
+    "party1ApprovedAt": "2026-07-23T17:08:31.058+00:00",
+    "party2ApprovedAt": null,
+    "expirationDate": null,
+    "otpCode": null,
+    "otpExpiresAt": null,
+    "editsRemaining": 3
+  }
+]

@@ -156,12 +156,51 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================
-   Print Styles
+   Print Styles — Strict Document Isolation & Formatting
    ============================================ */
 
 @media print {
+  /* Hide all non-essential page elements, navigation, footers, buttons, popovers & background pages */
+  header,
+  nav,
+  footer,
+  aside,
+  iframe,
+  .print\:hidden,
+  [data-print-hide="true"] {
+    display: none !important;
+  }
+
+  /* Reset document root for clean A4 / Letter paper output */
+  html,
   body {
-    background: white;
-    color: black;
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Force browser to render print background graphics & images */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Contract paper container */
+  .contract-print-node {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 24pt !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-after: avoid !important;
   }
 }

@@ -12,12 +12,24 @@ import {
   CheckCircle,
   ArrowLeft,
   Calendar,
+  User,
+  Check,
+  ChevronDown,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import type { ModeType } from "@/components/Navbar";
 
 export default function CreatePage() {
   const [mode, setMode] = useState<ModeType>("pro");
+
+  // ─── User Profile State ───
+  const [userProfile, setUserProfile] = useState<{
+    name?: string;
+    signingEmail?: string;
+    userEmail?: string;
+    authorizedEmails?: string[];
+    preferences?: { autoFillParty1Name?: boolean };
+  } | null>(null);
 
   // ─── Form State ───
   const [party1, setParty1] = useState("");
@@ -39,14 +51,43 @@ export default function CreatePage() {
   );
   const [error, setError] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const savingRef = useRef(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/profile");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.profile) {
+            setUserProfile(data.profile);
+            const autoFill = data.profile.preferences?.autoFillParty1Name !== false;
+            if (autoFill) {
+              if (data.profile.name) setParty1(data.profile.name);
+              const pEmail = data.profile.signingEmail || data.profile.userEmail;
+              if (pEmail) setParty1Email(pEmail);
+            }
+          }
+        }
+      } catch (e) {}
+    };
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     setGeneratedMarkdown(null);
     setError(null);
     setSavedHash("");
+    savingRef.current = false;
   }, [mode]);
 
   const handleSaveToStudio = async () => {
+    // Synchronous ref lock to immediately block multiple rapid clicks
+    if (savingRef.current || isSaving || savedHash) {
+      return;
+    }
+
+    savingRef.current = true;
     setIsSaving(true);
     setError(null);
     try {
@@ -66,11 +107,12 @@ export default function CreatePage() {
       const data = await response.json();
       if (!response.ok)
         throw new Error(data.error || "Failed to save to studio.");
-      setSavedHash(data.hash);
+      setSavedHash(data.hash || "saved");
     } catch (err: any) {
       setError(err.message);
     } finally {
       setIsSaving(false);
+      savingRef.current = false;
     }
   };
 
@@ -248,6 +290,7 @@ export default function CreatePage() {
         {mode === "pro" ? (
           <ProModeStudio
             key="pro"
+            userProfile={userProfile}
             party1={party1}
             setParty1={setParty1}
             party1Email={party1Email}
@@ -271,6 +314,7 @@ export default function CreatePage() {
             onGenerate={handleGenerate}
             onSave={handleSaveToStudio}
             onDownload={handleDownloadPdf}
+            mode={mode}
           />
         ) : (
           <FunModeStudio
@@ -304,6 +348,13 @@ export default function CreatePage() {
    ════════════════════════════════════════════════ */
 
 interface ProModeProps {
+  mode?: string;
+  userProfile?: {
+    name?: string;
+    signingEmail?: string;
+    userEmail?: string;
+    authorizedEmails?: string[];
+  } | null;
   party1: string;
   setParty1: (v: string) => void;
   party1Email: string;
@@ -351,26 +402,68 @@ function ProModeStudio(props: ProModeProps) {
             Contract Parameters
           </h2>
 
+          {/* Quick Profile Auto-Fill Bar */}
+          {props.userProfile && (props.userProfile.name || props.userProfile.authorizedEmails?.length) && (
+            <div className="flex items-center justify-between rounded-2xl bg-white/[0.02] border border-white/10 p-3.5 text-xs backdrop-blur-sm">
+              <div className="flex items-center gap-2.5 text-gray-300 font-medium">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold">
+                  {props.userProfile.name ? props.userProfile.name.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-white">
+                    {props.userProfile.name || props.userProfile.userEmail}
+                  </p>
+                  <p className="text-[10px] text-gray-500">Verified Profile</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (props.userProfile?.name) props.setParty1(props.userProfile.name);
+                  const pEmail = props.userProfile?.signingEmail || props.userProfile?.userEmail;
+                  if (pEmail) props.setParty1Email(pEmail);
+                }}
+                className="text-[11px] font-semibold text-cyan-300 hover:text-white bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0"
+              >
+                Auto-Fill Details
+              </button>
+            </div>
+          )}
+
           {/* Party Inputs */}
           <div className="grid grid-cols-2 gap-4">
+            {/* First Party Name */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-gray-500">
-                First Party
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-gray-400">
+                  First Party Name
+                </label>
+                {props.userProfile?.name && (
+                  <button
+                    type="button"
+                    onClick={() => props.setParty1(props.userProfile!.name!)}
+                    className="text-[10px] text-cyan-400 hover:text-cyan-300 font-semibold cursor-pointer"
+                  >
+                    Use Saved Name
+                  </button>
+                )}
+              </div>
               <input
                 className="w-full rounded-xl border border-white/5 bg-black/40 px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-[#7C3AED]/50 focus:outline-none transition-all"
-                placeholder="e.g. Acme Corp"
+                placeholder="e.g. Rahul Sharma"
                 value={props.party1}
                 onChange={(e) => props.setParty1(e.target.value)}
               />
             </div>
+
+            {/* Second Party Name */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-gray-500">
-                Second Party
+              <label className="text-xs font-medium text-gray-400">
+                Second Party Name
               </label>
               <input
                 className="w-full rounded-xl border border-white/5 bg-black/40 px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-[#7C3AED]/50 focus:outline-none transition-all"
-                placeholder="e.g. John Doe"
+                placeholder="e.g. Acme Corp"
                 value={props.party2}
                 onChange={(e) => props.setParty2(e.target.value)}
               />
@@ -379,26 +472,58 @@ function ProModeStudio(props: ProModeProps) {
 
           {/* Email Inputs */}
           <div className="grid grid-cols-2 gap-4">
+            {/* First Party Email + Dropdown Selector */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-gray-500">
+              <label className="text-xs font-medium text-gray-400 block">
                 First Party Email
               </label>
               <input
                 type="email"
                 className="w-full rounded-xl border border-white/5 bg-black/40 px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-[#7C3AED]/50 focus:outline-none transition-all"
-                placeholder="acme@corp.com"
+                placeholder="you@example.com"
                 value={props.party1Email}
                 onChange={(e) => props.setParty1Email(e.target.value)}
               />
+              
+              {/* Authorized Email Selector Pills */}
+              {props.userProfile?.authorizedEmails && props.userProfile.authorizedEmails.length > 0 && (
+                <div className="mt-2 space-y-1.5">
+                  <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block">
+                    Quick Pick Authorized Email
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {props.userProfile.authorizedEmails.map((email) => {
+                      const isSelected = props.party1Email.toLowerCase() === email.toLowerCase();
+                      return (
+                        <button
+                          key={email}
+                          type="button"
+                          onClick={() => props.setParty1Email(email)}
+                          className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+                              : "bg-white/[0.03] text-gray-400 border border-white/5 hover:border-white/20 hover:text-white"
+                          }`}
+                        >
+                          {isSelected && <Check className="h-3 w-3 text-cyan-400 shrink-0" />}
+                          <span className="truncate max-w-[140px]">{email}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Second Party Email */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-gray-500">
+              <label className="text-xs font-medium text-gray-400 block">
                 Second Party Email
               </label>
               <input
                 type="email"
                 className="w-full rounded-xl border border-white/5 bg-black/40 px-4 py-3 text-sm text-white placeholder-gray-600 focus:border-[#7C3AED]/50 focus:outline-none transition-all"
-                placeholder="john@doe.com"
+                placeholder="client@company.com"
                 value={props.party2Email}
                 onChange={(e) => props.setParty2Email(e.target.value)}
               />
@@ -490,32 +615,65 @@ function ProModeStudio(props: ProModeProps) {
                     __html: marked.parse(props.generatedMarkdown) as string,
                   }}
                 />
+
+                {/* Official PACTo Brand Seal at Bottom of Document */}
+                <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center text-center print:border-gray-200">
+                  <img
+                    src="https://meytgtlepyocsfhknmjq.supabase.co/storage/v1/object/public/PACTo-asset-folder/dark-mode-logo.png"
+                    alt="PACTo Seal"
+                    className="h-10 w-auto object-contain mx-auto opacity-90 filter drop-shadow-md"
+                  />
+                  <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 mt-2">
+                    Managed by SAE PACE Cryptographic Protocol
+                  </p>
+                </div>
               </div>
 
               {/* Action Footer */}
-              <div className="absolute bottom-0 inset-x-0 flex items-center justify-end bg-gradient-to-t from-[#131316] via-[#131316] to-transparent pt-12 pb-4 px-4 print:hidden gap-3">
-                {props.savedHash ? (
-                  <div className="flex items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-2 text-xs font-mono text-green-400 backdrop-blur-md">
-                    <CheckCircle className="h-4 w-4" />
-                    Saved! Hash: {props.savedHash.substring(0, 8)}...
+              <div className="absolute bottom-0 inset-x-0 flex flex-col sm:flex-row items-center justify-between bg-gradient-to-t from-[#131316] via-[#131316] to-transparent pt-12 pb-4 px-4 print:hidden gap-3">
+                {props.mode === "fun" || props.savedHash ? (
+                  <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                    <button
+                      onClick={props.onDownload}
+                      className="rounded-xl px-5 py-2.5 text-xs font-bold bg-[#7C3AED] text-white hover:bg-[#6d28d9] transition-all flex items-center gap-2 shadow-lg cursor-pointer"
+                    >
+                      <FileText className="h-4 w-4" />
+                      Export PDF
+                    </button>
+                    {!props.savedHash && (
+                      <button
+                        onClick={props.onSave}
+                        disabled={props.isSaving}
+                        className="btn-glow-cyan rounded-xl px-5 py-2.5 text-xs font-bold bg-[#06B6D4] text-black hover:bg-[#22d3ee] transition-all flex items-center gap-2 disabled:opacity-50 shrink-0 cursor-pointer"
+                      >
+                        <Save className="h-4 w-4" />
+                        {props.isSaving ? "Securing..." : "Save Fun Pact"}
+                      </button>
+                    )}
                   </div>
                 ) : (
+                  <span className="text-[11px] text-gray-500 italic">
+                    🔒 PDF Export will unlock once all parties verify and seal the pact.
+                  </span>
+                )}
+
+                {!props.savedHash && props.mode !== "fun" && (
                   <button
                     onClick={props.onSave}
-                    disabled={props.isSaving}
-                    className="rounded-xl px-5 py-2 text-sm font-semibold bg-white/10 text-white hover:bg-white/20 transition-all flex items-center gap-2 disabled:opacity-50 border border-white/10"
+                    disabled={props.isSaving || !!props.savedHash}
+                    className="btn-glow-cyan rounded-xl px-5 py-2.5 text-xs font-bold bg-[#06B6D4] text-black hover:bg-[#22d3ee] transition-all flex items-center gap-2 disabled:opacity-50 shrink-0 cursor-pointer"
                   >
                     <Save className="h-4 w-4" />
-                    {props.isSaving ? "Securing..." : "Save to Vault"}
+                    {props.isSaving ? "Securing..." : "Sign & Save to Vault"}
                   </button>
                 )}
-                <button
-                  onClick={props.onDownload}
-                  className="rounded-xl px-5 py-2 text-sm font-semibold bg-[#7C3AED] text-white hover:bg-[#6d28d9] transition-all flex items-center gap-2"
-                >
-                  <FileText className="h-4 w-4" />
-                  Export PDF
-                </button>
+
+                {props.savedHash && (
+                  <div className="flex items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-2 text-xs font-mono text-green-400 backdrop-blur-md shrink-0">
+                    <CheckCircle className="h-4 w-4" />
+                    Signed &amp; Saved! Hash: {props.savedHash.substring(0, 8)}...
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -591,12 +749,13 @@ function FunModeStudio(props: FunModeProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
-      className="flex-1 flex flex-col items-center justify-center relative overflow-y-auto print:block"
+      className="flex-1 flex flex-col items-center justify-center relative overflow-y-auto print:block print:bg-white print:p-0 print:overflow-visible"
     >
       {/* Ambient cyan light overlays */}
-      <div className="absolute w-[500px] h-[500px] bg-[#06B6D4]/10 blur-[120px] rounded-full pointer-events-none top-1/4 -translate-y-1/2" />
-      <div className="absolute w-[300px] h-[300px] bg-[#7C3AED]/10 blur-[100px] rounded-full pointer-events-none bottom-1/4 translate-x-32" />
+      <div className="absolute w-[500px] h-[500px] bg-[#06B6D4]/10 blur-[120px] rounded-full pointer-events-none top-1/4 -translate-y-1/2 print:hidden" />
+      <div className="absolute w-[300px] h-[300px] bg-[#7C3AED]/10 blur-[100px] rounded-full pointer-events-none bottom-1/4 translate-x-32 print:hidden" />
 
+      {/* Screen Interactive Container */}
       <div className="relative z-10 w-full max-w-2xl mx-auto px-4 py-12 print:hidden">
         {props.generatedMarkdown ? (
           /* ─── Result View ─── */
@@ -611,15 +770,34 @@ function FunModeStudio(props: FunModeProps) {
             <div className="max-h-[50vh] overflow-y-auto scrollbar-hide rounded-xl bg-black/30 p-6 border border-white/5">
               <div
                 ref={props.previewRef}
-                className="prose max-w-none prose-invert font-sans text-base leading-loose prose-headings:text-[#06B6D4] text-gray-300 prose-strong:text-[#67e8f9] print:text-black print:prose-headings:text-black"
+                className="prose max-w-none prose-invert font-sans text-base leading-relaxed prose-h1:text-2xl prose-h1:font-black prose-h1:text-[#06B6D4] prose-h1:border-b prose-h1:border-white/10 prose-h1:pb-3 prose-h1:mb-6 prose-h1:text-center prose-h2:text-lg prose-h2:font-extrabold prose-h2:text-[#06B6D4] prose-h2:border-b prose-h2:border-white/10 prose-h2:pb-2 prose-h2:mt-6 prose-h2:mb-3 prose-h3:text-base prose-h3:font-bold prose-h3:text-cyan-300 prose-h3:mt-4 prose-h3:mb-2 text-gray-200 prose-p:text-gray-300 prose-p:leading-relaxed prose-p:my-3 prose-strong:font-extrabold prose-strong:text-cyan-300 prose-hr:border-white/10 prose-hr:my-6 prose-li:marker:text-cyan-400 prose-li:text-gray-300"
                 dangerouslySetInnerHTML={{
                   __html: marked.parse(props.generatedMarkdown) as string,
                 }}
               />
+
+              {/* Official PACTo Brand Seal */}
+              <div className="mt-8 pt-6 border-t border-white/10 flex flex-col items-center justify-center text-center">
+                <img
+                  src="https://meytgtlepyocsfhknmjq.supabase.co/storage/v1/object/public/PACTo-asset-folder/dark-mode-logo.png"
+                  alt="PACTo Seal"
+                  className="h-10 w-auto object-contain mx-auto opacity-90 filter drop-shadow-md"
+                />
+                <p className="text-[10px] font-mono uppercase tracking-widest text-gray-500 mt-2">
+                  Managed by SAE PACE Cryptographic Protocol
+                </p>
+              </div>
             </div>
 
             {/* Actions */}
             <div className="flex items-center justify-center gap-3 mt-6">
+              <button
+                onClick={props.onDownload}
+                className="rounded-xl px-5 py-2.5 text-xs font-bold bg-[#06B6D4] text-black hover:bg-[#22d3ee] transition-all flex items-center gap-2 shadow-lg cursor-pointer"
+              >
+                <FileText className="h-4 w-4" />
+                Export PDF
+              </button>
               {props.savedHash ? (
                 <div className="flex items-center gap-2 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-2 text-xs font-mono text-green-400">
                   <CheckCircle className="h-4 w-4" />
@@ -629,19 +807,12 @@ function FunModeStudio(props: FunModeProps) {
                 <button
                   onClick={props.onSave}
                   disabled={props.isSaving}
-                  className="rounded-xl px-5 py-2.5 text-sm font-semibold bg-white/10 text-white hover:bg-white/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                  className="btn-glow-cyan rounded-xl px-5 py-2.5 text-xs font-bold bg-white/10 text-white hover:bg-white/20 transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   <Save className="h-4 w-4" />
-                  {props.isSaving ? "Saving..." : "Save to Vault"}
+                  {props.isSaving ? "Saving..." : "Save Fun Pact"}
                 </button>
               )}
-              <button
-                onClick={props.onDownload}
-                className="rounded-xl px-5 py-2.5 text-sm font-semibold bg-[#06B6D4] text-black hover:bg-[#22d3ee] transition-all flex items-center gap-2"
-              >
-                <FileText className="h-4 w-4" />
-                Export PDF
-              </button>
             </div>
           </div>
         ) : (
@@ -723,6 +894,35 @@ function FunModeStudio(props: FunModeProps) {
           </div>
         )}
       </div>
+
+      {/* Dedicated Print View — Triggered only when window.print() runs */}
+      {props.generatedMarkdown && (
+        <div className="hidden print:block print:w-full print:p-8 print:bg-white print:text-black">
+          <div
+            className="prose max-w-none print:text-black font-sans text-sm leading-relaxed 
+              prose-h1:text-2xl prose-h1:font-extrabold prose-h1:text-black prose-h1:border-b-2 prose-h1:border-black prose-h1:pb-3 prose-h1:mb-6 prose-h1:text-center
+              prose-h2:text-lg prose-h2:font-extrabold prose-h2:text-black prose-h2:border-b prose-h2:border-gray-400 prose-h2:pb-1 prose-h2:mt-6 prose-h2:mb-3
+              prose-h3:text-base prose-h3:font-bold prose-h3:text-black prose-h3:mt-4 prose-h3:mb-2
+              prose-p:text-gray-900 prose-p:leading-relaxed prose-p:my-3
+              prose-strong:font-extrabold prose-strong:text-black
+              prose-hr:border-gray-400 prose-hr:my-6"
+            dangerouslySetInnerHTML={{
+              __html: marked.parse(props.generatedMarkdown) as string,
+            }}
+          />
+
+          <div className="mt-8 pt-6 border-t border-gray-400 flex flex-col items-center justify-center text-center">
+            <img
+              src="https://meytgtlepyocsfhknmjq.supabase.co/storage/v1/object/public/PACTo-asset-folder/light-mode-logo.png"
+              alt="PACTo Seal"
+              className="h-10 w-auto object-contain mx-auto"
+            />
+            <p className="text-[10px] font-mono uppercase tracking-widest text-gray-600 mt-2">
+              Managed by SAE PACE Cryptographic Protocol — FUN Mode Pact
+            </p>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

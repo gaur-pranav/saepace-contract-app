@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="pactoGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="50%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#7C3AED" />
+    </linearGradient>
+    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Dark Background Plate -->
+  <rect width="512" height="512" rx="128" fill="#060608" />
+
+  <!-- Security Lock Icon -->
+  <g filter="url(#neonGlow)">
+    <!-- Lock Shackle -->
+    <path
+      d="M176 220 V148 C176 103.8 211.8 68 256 68 C300.2 68 336 103.8 336 148 V220"
+      fill="none"
+      stroke="url(#pactoGlow)"
+      stroke-width="36"
+      stroke-linecap="round"
+    />
+    <!-- Lock Body -->
+    <rect
+      x="128"
+      y="210"
+      width="256"
+      height="220"
+      rx="44"
+      fill="url(#pactoGlow)"
+    />
+    <!-- Keyhole -->
+    <circle cx="256" cy="300" r="22" fill="#060608" />
+    <path
+      d="M244 316 L268 316 L272 360 L240 360 Z"
+      fill="#060608"
+    />
+  </g>
+</svg>

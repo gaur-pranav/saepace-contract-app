@@ -145,7 +145,7 @@ export default function DashboardPage() {
         onRefresh={fetchContracts}
       />
 
-      <div className="flex-1 p-4 sm:p-8 max-w-7xl mx-auto w-full pb-28 lg:pb-8">
+      <div className="flex-1 p-4 sm:p-8 max-w-7xl mx-auto w-full pb-28 lg:pb-8 print:hidden">
         {/* Page Header + Notifications Center */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -153,10 +153,10 @@ export default function DashboardPage() {
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">
-              Document Vault
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Dashboard
             </h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-xs sm:text-sm text-gray-500">
               Multi-party verified contracts & cryptographic signatures.
             </p>
           </div>

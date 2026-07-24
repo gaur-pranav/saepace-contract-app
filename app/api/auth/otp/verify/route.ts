@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Contract ID and OTP code are required." }, { status: 400 });
     }
 
-    const contract = getContractById(contractId);
+    const contract = await getContractById(contractId);
     if (!contract) {
       return NextResponse.json({ error: "Contract not found." }, { status: 404 });
     }
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const updatedContract = updateContract(contractId, {
+    const updatedContract = await updateContract(contractId, {
       party1ApprovedAt,
       party2ApprovedAt,
       status: finalStatus,

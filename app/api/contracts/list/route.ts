@@ -10,33 +10,36 @@ export async function GET() {
     }
 
     const userEmail = session.email.toLowerCase();
-    const rawContracts = getContractsByUser(userEmail);
+    const rawContracts = await getContractsByUser(userEmail);
 
-    const contracts: ContractDocument[] = rawContracts.map((c) => {
-      let updatedStatus = c.status || 'pending_review';
-      const now = new Date();
+    const contracts: ContractDocument[] = await Promise.all(
+      rawContracts.map(async (c) => {
+        let updatedStatus = c.status || 'pending_review';
+        const now = new Date();
 
-      // Check Expiration
-      if (c.expirationDate && new Date(c.expirationDate) < now && updatedStatus !== 'approved') {
-        updatedStatus = 'expired';
-      } else if (c.party1ApprovedAt && c.party2ApprovedAt) {
-        updatedStatus = 'approved';
-      } else if (c.party2Email && c.party2Email.toLowerCase() === userEmail && !c.party2ApprovedAt) {
-        updatedStatus = 'pending_review';
-      } else if (c.party1Email && c.party1Email.toLowerCase() === userEmail && !c.party2ApprovedAt) {
-        updatedStatus = 'pending_approval';
-      }
+        // Check Expiration
+        if (c.expirationDate && new Date(c.expirationDate) < now && updatedStatus !== 'approved') {
+          updatedStatus = 'expired';
+        } else if (c.party1ApprovedAt && c.party2ApprovedAt) {
+          updatedStatus = 'approved';
+        } else if (c.party2Email && c.party2Email.toLowerCase() === userEmail && !c.party2ApprovedAt) {
+          updatedStatus = 'pending_review';
+        } else if (c.party1Email && c.party1Email.toLowerCase() === userEmail && !c.party2ApprovedAt) {
+          updatedStatus = 'pending_approval';
+        }
 
-      if (updatedStatus !== c.status) {
-        updateContract(c.id, { status: updatedStatus });
+        if (updatedStatus !== c.status) {
+          await updateContract(c.id, { status: updatedStatus });
+          return { ...c, status: updatedStatus };
+        }
+
         return { ...c, status: updatedStatus };
-      }
-
-      return { ...c, status: updatedStatus };
-    });
+      })
+    );
 
     return NextResponse.json({ contracts, userEmail });
   } catch (error: any) {
+    console.error("Failed to fetch contracts:", error);
     return NextResponse.json({ error: "Failed to fetch contracts." }, { status: 500 });
   }
 }

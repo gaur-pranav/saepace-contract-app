@@ -53,12 +53,18 @@ export async function POST(request: Request) {
         "2. Use `---` dividers after the title and between major sections.\n" +
         "3. Use `## ` (Heading 2) for all subheadings (e.g., `## PARTIES & RECITALS`, `## SCOPE OF WORK`, `## PAYMENT & FINANCIAL TERMS`, `## DEFAULT & REMEDIES`, `## JURISDICTION`).\n" +
         "4. Bold all party names, key terms, amounts, deadlines, and percentages (e.g., **Service Provider**, **Client**, **INR 50,000**, **50% Upfront**).\n" +
-        "5. Underline or semi-bold important clause headers within bullet points (e.g., - **<u>Scope of Services</u>:** ...).\n" +
+        "5. Underline or semi-bold important clause headers within bullet points (e.g., - **Scope of Services:** ...).\n" +
         "6. Include a dedicated `## SIGNATURE & VERIFICATION` section at the end with signature lines and email addresses.\n\n" +
         "Maintain authoritative, precise legal language with clear structure.";
     } else {
       systemInstruction = 
-        "Act as a modern, witty Gen-Z writer drafting a casual agreement ('pact'). Balance light humor with clear communication of the actual terms. Use modern internet vernacular but avoid exaggerated slang. Strict constraints: Maximum of 2 emojis in the entire document. Maintain clear markdown formatting for sections (e.g., 'The Vibe', 'The Deal', 'The Penalty'). Keep it structured, easily readable, and playfully serious rather than overly comedic.";
+        "Act as a modern, witty Gen-Z writer drafting a casual agreement ('pact'). Balance light humor with clear communication of terms. Use modern internet vernacular but avoid exaggerated slang. Strict constraints: Maximum of 2 emojis in the entire document.\n\n" +
+        "CRITICAL MARKDOWN FORMATTING RULES FOR VISUAL STANDOUT:\n" +
+        "1. Start with a bold title: `# CASUAL PACT AGREEMENT`.\n" +
+        "2. Use `---` dividers between sections.\n" +
+        "3. ALWAYS format major section subheadings using `## ` (Heading 2) e.g., `## 1. The Vibe`, `## 2. The Deal`, `## 3. The Penalty`, `## 4. Execution & Seal`.\n" +
+        "4. BOLD all party names, promises, penalties, and key terms (`**name**`, `**action**`, `**penalty**`) so they stand out clearly in rich text format.\n" +
+        "5. Keep section paragraphs clean, distinct, and well-spaced for maximum readability.";
     }
 
     // Call Groq API
@@ -90,6 +96,24 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("Groq Generation API Error:", error);
 
+    // Check if the error is due to expired or invalid API key
+    const isExpiredKey =
+      error?.status === 401 ||
+      error?.statusCode === 401 ||
+      /expired_api_key|invalid_api_key|Invalid API Key/i.test(
+        error?.message || JSON.stringify(error)
+      );
+
+    if (isExpiredKey) {
+      return NextResponse.json(
+        {
+          error:
+            "The Groq AI API Key has expired or is invalid. Please generate a fresh free API Key at https://console.groq.com/keys and update GROQ_API_KEY in Netlify / .env.local.",
+        },
+        { status: 401 }
+      );
+    }
+
     // Check if the error is due to API rate limiting
     const isRateLimit =
       error?.status === 429 ||
@@ -104,7 +128,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Internal Server Error" },
+      { error: error?.message || "Failed to generate legal contract content." },
       { status: 500 }
     );
   }

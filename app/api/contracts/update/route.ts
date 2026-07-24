@@ -15,9 +15,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Contract ID and content are required." }, { status: 400 });
     }
 
-    const contract = getContractById(contractId);
+    const contract = await getContractById(contractId);
     if (!contract) {
       return NextResponse.json({ error: "Contract not found." }, { status: 404 });
+    }
+
+    // Security Check: Verify user is authorized on this contract
+    const userEmail = session.email.toLowerCase();
+    const isAuthorized =
+      (contract.userId && contract.userId.toLowerCase() === userEmail) ||
+      (contract.party1Email && contract.party1Email.toLowerCase() === userEmail) ||
+      (contract.party2Email && contract.party2Email.toLowerCase() === userEmail);
+
+    if (!isAuthorized) {
+      return NextResponse.json({ error: "Forbidden: You are not a party to this contract." }, { status: 403 });
     }
 
     if (contract.status === "approved") {
@@ -35,11 +46,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const updated = updateContract(contractId, {
+    // Update contract content & reset dual approvals so both parties re-verify changes
+    const updated = await updateContract(contractId, {
       content,
       party1: party1 || contract.party1,
       party2: party2 || contract.party2,
       editsRemaining: currentEdits - 1,
+      status: "pending_review",
+      party1ApprovedAt: null,
+      party2ApprovedAt: null,
       hash: "", // Reset hash if draft updated before final dual approval
     });
 
@@ -47,7 +62,7 @@ export async function POST(request: Request) {
       success: true,
       contract: updated,
       editsRemaining: currentEdits - 1,
-      message: `Document updated successfully. ${currentEdits - 1} edits remaining on Free Plan.`,
+      message: `Contract updated via AI. Approval reset — First & Second party must review and re-sign. (${currentEdits - 1} edits remaining)`,
     });
   } catch (error: any) {
     console.error("Failed to update contract:", error);

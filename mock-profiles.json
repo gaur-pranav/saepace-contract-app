@@ -1,0 +1,17 @@
+{
+  "awsforpranav@gmail.com": {
+    "userEmail": "awsforpranav@gmail.com",
+    "name": "Pranav",
+    "contactNo": "",
+    "signingEmail": "awsforpranav@gmail.com",
+    "bio": "",
+    "authorizedEmails": [
+      "awsforpranav@gmail.com"
+    ],
+    "preferences": {
+      "darkTheme": true,
+      "autoFillParty1Name": true,
+      "emailNotifications": true
+    }
+  }
+}
